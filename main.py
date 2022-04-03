@@ -1,7 +1,7 @@
 import stripe
 import os
 from typing import List
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.responses import RedirectResponse
 from .schemas import *
 
@@ -15,7 +15,7 @@ stripe.api_key = str(os.environ["API_KEY"])
 app = FastAPI()
 
 
-@app.post("/create-checkout-session", response_class=RedirectResponse)
+@app.post("/create-checkout-session", response_class=RedirectResponse, status_code=status.HTTP_201_CREATED)
 async def root(line_items: List[LineItem]):
     # Check for user-provided URLs
     if not os.environ["CHECKOUT_SUCCESS_URL"]:
@@ -39,10 +39,10 @@ async def root(line_items: List[LineItem]):
         raise e
 
 
-@app.post("create-product")
+@app.post("create-product", status_code=status.HTTP_201_CREATED)
 def create_product(product: StripeProduct):
     try:
-        stripe.Product.create(**product)
+        stripe.Product.create(**product.dict())
 
     except Exception as e:
         print(e)
