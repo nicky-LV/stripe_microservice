@@ -10,6 +10,8 @@ from .schemas import *
 if not os.environ["API_KEY"]:
     raise OSError("Stripe API key must be provided as the environment variable: 'API_KEY'.")
 
+stripe.api_key = str(os.environ["API_KEY"])
+
 app = FastAPI()
 
 
@@ -33,4 +35,15 @@ async def root(line_items: List[LineItem]):
         return session.url
 
     except Exception as e:
+        print(e)
+        raise e
+
+
+@app.post("create-product")
+def create_product(product: StripeProduct):
+    try:
+        stripe.Product.create(**product)
+
+    except Exception as e:
+        print(e)
         raise e
