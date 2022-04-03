@@ -63,3 +63,5 @@ class StripeProduct(BaseModel):
                 raise ValueError("Product statement descriptor exceeds 22 characters.")
 
             return value
+
+    # todo: validate regex of url
